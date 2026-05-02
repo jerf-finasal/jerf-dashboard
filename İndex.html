@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JERF Finansal OS — Terminal Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --border: #1f2937;
+    --accent: #00e5a0;
+    --accent2: #0ea5e9;
+    --accent3: #f59e0b;
+    --red: #f43f5e;
+    --text: #e2e8f0;
+    --muted: #64748b;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Mono', monospace; min-height: 100vh; overflow-x: hidden; position: relative; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0,229,160,0.06) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 10% 80%, rgba(14,165,233,0.05) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+  body::after { content: ''; position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); pointer-events: none; z-index: 1; }
+  .container { position: relative; z-index: 2; max-width: 1400px; margin: 0 auto; padding: 24px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+  .logo-block h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 28px; letter-spacing: -1px; color: #fff; }
+  .logo-block h1 span { color: var(--accent); }
+  .logo-block p { font-size: 11px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+  .header-right { text-align: right; }
+  .live-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.2); color: var(--accent); font-size: 10px; letter-spacing: 2px; padding: 4px 10px; border-radius: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .live-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .clock { font-size: 12px; color: var(--muted); }
+  .kpi-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .kpi-card { background: var(--surface); border: 1px solid var(--border); padding: 20px 24px; position: relative; overflow: hidden; animation: fadeUp 0.6s ease both; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+  .kpi-card.primary::before { background: var(--accent); }
+  .kpi-card.sky::before { background: var(--accent2); }
+  .kpi-card.amber::before { background: var(--accent3); }
+  .kpi-card:nth-child(1) { animation-delay: 0.0s; } .kpi-card:nth-child(2) { animation-delay: 0.1s; } .kpi-card:nth-child(3) { animation-delay: 0.2s; } .kpi-card:nth-child(4) { animation-delay: 0.3s; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .kpi-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .kpi-value { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 32px; color: #fff; line-height: 1; margin-bottom: 6px; }
+  .kpi-card.primary .kpi-value { font-size: 40px; }
+  .kpi-sub { font-size: 12px; color: var(--muted); }
+  .kpi-sub .highlight { color: var(--accent); }
+  .kpi-badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 2px; margin-top: 6px; }
+  .badge-green { background: rgba(0,229,160,0.1); color: var(--accent); }
+  .badge-blue { background: rgba(14,165,233,0.1); color: var(--accent2); }
+  .badge-amber { background: rgba(245,158,11,0.1); color: var(--accent3); }
+  .main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; margin-bottom: 16px; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; animation: fadeUp 0.6s 0.4s ease both; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .card-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--text); }
+  .card-badge { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); padding: 3px 8px; border: 1px solid var(--border); }
+  .donut-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; display: flex; flex-direction: column; animation: fadeUp 0.6s 0.5s ease both; }
+  .donut-wrapper { position: relative; display: flex; justify-content: center; align-items: center; margin: 16px 0; }
+  .donut-center { position: absolute; text-align: center; }
+  .donut-center-value { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; color: #fff; line-height: 1; }
+  .donut-center-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+  .legend { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .legend-item { display: flex; align-items: center; justify-content: space-between; }
+  .legend-left { display: flex; align-items: center; gap: 10px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .legend-name { font-size: 12px; color: var(--text); font-family: 'Space Mono', monospace; }
+  .legend-pct { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; }
+  .table-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; animation: fadeUp 0.6s 0.6s ease both; }
+  .asset-table { width: 100%; border-collapse: collapse; }
+  .asset-table th { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); text-align: left; padding: 0 12px 12px 12px; border-bottom: 1px solid var(--border); }
+  .asset-table th:last-child { text-align: right; }
+  .asset-table td { padding: 14px 12px; border-bottom: 1px solid rgba(31,41,55,0.6); font-size: 13px; vertical-align: middle; }
+  .asset-table tr:last-child td { border-bottom: none; }
+  .asset-table tr { transition: background 0.2s; cursor: default; }
+  .asset-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .ticker-cell { display: flex; align-items: center; gap: 10px; }
+  .ticker-pip { width: 4px; height: 32px; border-radius: 2px; flex-shrink: 0; }
+  .ticker-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 15px; color: #fff; }
+  .ticker-type { font-size: 9px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; display: block; margin-top: 1px; }
+  .price-cell { font-family: 'Space Mono', monospace; font-size: 13px; }
+  .weight-cell { text-align: right; }
+  .weight-bar-wrapper { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+  .weight-bar-bg { width: 80px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .weight-bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+  .weight-pct { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; min-width: 36px; text-align: right; }
+  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .dividend-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; animation: fadeUp 0.6s 0.7s ease both; }
+  .div-months { display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px; margin-top: 16px; }
+  .div-month { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .div-bar-track { width: 100%; height: 40px; background: var(--border); border-radius: 2px; display: flex; align-items: flex-end; overflow: hidden; }
+  .div-bar { width: 100%; border-radius: 2px 2px 0 0; transition: height 1.2s cubic-bezier(.22,1,.36,1); }
+  .div-month-label { font-size: 8px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .system-card { background: var(--surface); border: 1px solid var(--border); padding: 24px; animation: fadeUp 0.6s 0.8s ease both; }
+  .sys-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .sys-item { background: var(--surface2); border: 1px solid var(--border); padding: 14px 16px; }
+  .sys-item-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .sys-item-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; color: #fff; }
+  .sys-item-value.green { color: var(--accent); }
+  .sys-item-value.blue { color: var(--accent2); }
+  .refresh-btn { display: flex; align-items: center; gap: 6px; background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.25); color: var(--accent); font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; padding: 6px 14px; cursor: pointer; transition: all 0.2s; margin-top: 16px; width: 100%; justify-content: center; }
+  .refresh-btn:hover { background: rgba(0,229,160,0.15); border-color: var(--accent); }
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 140px; padding-top: 16px; }
+  .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+  .bar-wrap { width: 100%; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; position: relative; }
+  .bar-fill { width: 100%; border-radius: 2px 2px 0 0; min-height: 4px; transition: height 1s cubic-bezier(.22,1,.36,1); }
+  .bar-label { font-size: 9px; color: var(--muted); letter-spacing: 1px; text-align: center; white-space: nowrap; }
+  .bar-val { font-size: 9px; color: var(--muted); position: absolute; top: -16px; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  .sparkline-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .sparkline-row:last-child { border-bottom: none; }
+  .sp-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; width: 46px; flex-shrink: 0; }
+  .sp-canvas { flex: 1; height: 32px; }
+  .sp-change { font-size: 11px; min-width: 52px; text-align: right; font-family: 'Space Mono', monospace; }
+  .pos { color: var(--accent); } .neg { color: #f43f5e; }
+  .ticker-tape { background: var(--surface2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; height: 32px; display: flex; align-items: center; margin-bottom: 24px; }
+  .tape-inner { display: flex; gap: 48px; animation: ticker 20s linear infinite; white-space: nowrap; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .tape-item { font-size: 11px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+  .tape-ticker { color: var(--muted); } .tape-price { color: var(--text); }
+  footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  footer p { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  .divider-line { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 8px 0; }
+  @media (max-width: 1100px) {
+    .container { padding: 16px; }
+    header { margin-bottom: 16px; }
+    .logo-block h1 { font-size: 22px; }
+    .kpi-row { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .kpi-card.primary { grid-column: 1 / -1; }
+    .kpi-card.primary .kpi-value { font-size: 34px; }
+    .kpi-value { font-size: 26px; }
+    .main-grid { grid-template-columns: 1fr 280px; gap: 12px; }
+    .asset-table .try-col { display: none; }
+    .asset-table td, .asset-table th { padding: 10px 8px; font-size: 12px; }
+    .bottom-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .div-bar-track { height: 32px; }
+    footer { flex-direction: column; gap: 4px; text-align: center; }
+  }
+  @media (max-width: 896px) and (orientation: landscape), (max-width: 768px) {
+    .container { padding: 10px 12px; }
+    header { margin-bottom: 10px; padding-bottom: 10px; }
+    .logo-block h1 { font-size: 18px; }
+    .logo-block p { display: none; }
+    .ticker-tape { height: 26px; margin-bottom: 12px; }
+    .kpi-row { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .kpi-card { padding: 12px 14px; }
+    .kpi-card.primary { grid-column: 1 / -1; }
+    .kpi-card.primary .kpi-value { font-size: 26px; }
+    .kpi-value { font-size: 20px; }
+    .main-grid { grid-template-columns: 1fr; gap: 10px; }
+    .donut-card { flex-direction: row; align-items: center; gap: 16px; padding: 14px; }
+    .donut-card .card-header { display: none; }
+    .donut-wrapper { margin: 0; flex-shrink: 0; }
+    #donut-svg { width: 120px; height: 120px; }
+    .donut-center-value { font-size: 15px; }
+    .legend { flex: 1; gap: 8px; margin-top: 0; }
+    .chart-card { padding: 14px; }
+    .bar-chart { height: 80px; }
+    .asset-table .try-col { display: none; }
+    .asset-table .shares-col { display: none; }
+    .asset-table td, .asset-table th { padding: 8px 6px; font-size: 11px; }
+    .ticker-type { display: none; }
+    .weight-bar-bg { width: 48px; }
+    .bottom-grid { grid-template-columns: 1fr; gap: 10px; }
+    .div-bar-track { height: 24px; }
+    .div-month-label { font-size: 6px; }
+    footer { flex-direction: column; gap: 2px; text-align: center; }
+  }
+  @media (max-width: 700px) and (orientation: landscape) {
+    .kpi-card.primary .kpi-value { font-size: 22px; }
+    .kpi-value { font-size: 18px; }
+    #donut-svg { width: 100px; height: 100px; }
+    .bar-chart { height: 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo-block">
+      <h1>JERF <span>//</span> FİNANSAL OS</h1>
+      <p>V2 — Dinamik Portföy Terminali</p>
+    </div>
+    <div class="header-right">
+      <div class="live-badge"><span class="live-dot"></span> Canlı Takip</div>
+      <div class="clock" id="clock">—</div>
+    </div>
+  </header>
+  <div class="ticker-tape"><div class="tape-inner" id="tape"></div></div>
+  <div class="kpi-row">
+    <div class="kpi-card primary">
+      <div class="kpi-label">Toplam Portföy Değeri</div>
+      <div class="kpi-value" id="kpi-usd">$1,995.00</div>
+      <div class="kpi-sub">≈ <span class="highlight" id="kpi-try">₺90,972.00</span> <span style="margin-left:8px;font-size:10px;color:var(--muted);">@ ₺45.60 / $</span></div>
+      <span class="kpi-badge badge-green">↑ Aktif</span>
+    </div>
+    <div class="kpi-card sky">
+      <div class="kpi-label">Aylık Temettü</div>
+      <div class="kpi-value">$15.50</div>
+      <div class="kpi-sub">≈ <span>₺706.80</span></div>
+      <span class="kpi-badge badge-blue">Tahmini</span>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Enstrüman Sayısı</div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-sub">JEPQ · JEPI · SCHD</div>
+      <span class="kpi-badge badge-amber">ETF</span>
+    </div>
+    <div class="kpi-card primary">
+      <div class="kpi-label">Yıllık Tahmini</div>
+      <div class="kpi-value">$186</div>
+      <div class="kpi-sub">≈ <span>₺8,482</span></div>
+      <span class="kpi-badge badge-green">12 ay × $15.50</span>
+    </div>
+  </div>
+  <div class="main-grid">
+    <div class="chart-card">
+      <div class="card-header">
+        <span class="card-title">Fiyat & Performans</span>
+        <span class="card-badge">7 Günlük Simüle</span>
+      </div>
+      <div id="sparklines"></div>
+      <div class="divider-line" style="margin: 20px 0;"></div>
+      <div class="card-header" style="margin-bottom:4px;">
+        <span class="card-title" style="font-size:11px;">USD Değer Dağılımı</span>
+      </div>
+      <div class="bar-chart" id="bar-chart"></div>
+    </div>
+    <div class="donut-card">
+      <div class="card-header">
+        <span class="card-title">Portföy Dağılımı</span>
+        <span class="card-badge">Ağırlık %</span>
+      </div>
+      <div class="donut-wrapper">
+        <svg width="180" height="180" viewBox="0 0 180 180" id="donut-svg">
+          <circle cx="90" cy="90" r="70" fill="none" stroke="#1f2937" stroke-width="28"/>
+        </svg>
+        <div class="donut-center">
+          <div class="donut-center-value">$1,995</div>
+          <div class="donut-center-label">Toplam</div>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+  </div>
+  <div class="table-card" style="margin-bottom:16px;">
+    <div class="card-header">
+      <span class="card-title">Dinamik Varlık Takibi</span>
+      <span class="card-badge">Anlık</span>
+    </div>
+    <table class="asset-table">
+      <thead>
+        <tr>
+          <th>Enstrüman</th>
+          <th class="shares-col">Adet</th>
+          <th>Anlık Fiyat</th>
+          <th>USD Değer</th>
+          <th class="try-col">TRY Değer</th>
+          <th style="text-align:right;">Ağırlık</th>
+        </tr>
+      </thead>
+      <tbody id="asset-tbody"></tbody>
+    </table>
+  </div>
+  <div class="bottom-grid">
+    <div class="dividend-card">
+      <div class="card-header">
+        <span class="card-title">Aylık Temettü Projeksiyonu</span>
+        <span class="card-badge">2025</span>
+      </div>
+      <div class="div-months" id="div-months"></div>
+    </div>
+    <div class="system-card">
+      <div class="card-header">
+        <span class="card-title">Sistem Parametreleri</span>
+        <span class="card-badge">OS V2</span>
+      </div>
+      <div class="sys-grid">
+        <div class="sys-item"><div class="sys-item-label">USD/TRY Kuru</div><div class="sys-item-value green" id="kur">45.60</div></div>
+        <div class="sys-item"><div class="sys-item-label">Güncelleme</div><div class="sys-item-value blue">20 dk.</div></div>
+        <div class="sys-item"><div class="sys-item-label">Temettü Verimi</div><div class="sys-item-value green">~9.32%</div></div>
+        <div class="sys-item"><div class="sys-item-label">Toplam Lot</div><div class="sys-item-value">3 ETF</div></div>
+        <div class="sys-item" style="grid-column:1/-1;"><div class="sys-item-label">Felsefe</div><div class="sys-item-value" style="font-size:11px;color:var(--accent);">SİSTEM › TAHMİN</div></div>
+      </div>
+      <button class="refresh-btn" onclick="simulateRefresh()">⟳ &nbsp;VERİLERİ YENİLE</button>
+    </div>
+  </div>
+  <footer>
+    <p>JERF Finansal OS V2 — Dinamik Dashboard | Tüm değerler tahminidir.</p>
+    <p id="last-update">Son güncelleme: —</p>
+  </footer>
+</div>
+<script>
+const assets = [
+  { ticker: 'JEPQ', type: 'Covered Call ETF', shares: 13.7974, price: 57.25, color: '#00e5a0', weight: 41.8 },
+  { ticker: 'JEPI', type: 'Equity Premium ETF', shares: 11.5146, price: 59.00, color: '#0ea5e9', weight: 34.1 },
+  { ticker: 'SCHD', type: 'Dividend ETF', shares: 16.7351, price: 28.75, color: '#f59e0b', weight: 24.1 },
+];
+const USD_TRY = 45.60;
+const months = ['OCA','ŞUB','MAR','NİS','MAY','HAZ','TEM','AĞU','EYL','EKİ','KAS','ARA'];
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleString('tr-TR', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+}
+setInterval(updateClock, 1000); updateClock();
+function buildTape() {
+  const items = assets.map(a => { const chg = (Math.random()*2 - 0.5).toFixed(2); const sign = chg >= 0 ? '+' : ''; const cls = chg >= 0 ? 'pos' : 'neg'; return `<span class="tape-item"><span class="tape-ticker">${a.ticker}</span><span class="tape-price">$${a.price.toFixed(2)}</span><span class="tape-change ${cls}">${sign}${chg}%</span></span>`; }).join('');
+  document.getElementById('tape').innerHTML = items + items + items + items;
+}
+buildTape();
+function buildDonut() {
+  const svg = document.getElementById('donut-svg'); const r = 70, cx = 90, cy = 90; const circ = 2 * Math.PI * r; let offset = 0; const legend = document.getElementById('legend');
+  assets.forEach(a => {
+    const dash = (a.weight / 100) * circ - 3; const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', r); circle.setAttribute('fill', 'none'); circle.setAttribute('stroke', a.color); circle.setAttribute('stroke-width', '28');
+    circle.setAttribute('stroke-dasharray', `${dash} ${circ - dash}`); circle.setAttribute('stroke-dashoffset', -(offset * circ / 100) + circ * 0.25); svg.appendChild(circle); offset += a.weight;
+    legend.innerHTML += `<div class="legend-item"><div class="legend-left"><div class="legend-dot" style="background:${a.color}"></div><span class="legend-name">${a.ticker}</span></div><span class="legend-pct" style="color:${a.color}">${a.weight}%</span></div>`;
+  });
+}
+buildDonut();
+function buildTable() {
+  const tbody = document.getElementById('asset-tbody'); tbody.innerHTML = '';
+  assets.forEach(a => { const val = a.shares * a.price; tbody.innerHTML += `<tr><td><div class="ticker-cell"><div class="ticker-pip" style="background:${a.color}"></div><div><span class="ticker-name">${a.ticker}</span><span class="ticker-type">${a.type}</span></div></div></td><td class="shares-col">${a.shares.toFixed(4)}</td><td class="price-cell" style="color:${a.color}">$${a.price.toFixed(2)}</td><td class="price-cell">$${val.toFixed(2)}</td><td class="price-cell try-col">₺${(val*USD_TRY).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td class="weight-cell"><div class="weight-bar-wrapper"><div class="weight-bar-bg"><div class="weight-bar-fill" style="width:${a.weight}%;background:${a.color}"></div></div><span class="weight-pct" style="color:${a.color}">%${a.weight}</span></div></td></tr>`; });
+}
+buildTable();
+function generateSpark(base, n) { const pts = [base]; for (let i = 1; i < n; i++) pts.push(pts[i-1] * (1 + (Math.random() - 0.49) * 0.015)); return pts; }
+function buildSparklines() {
+  const container = document.getElementById('sparklines'); container.innerHTML = '';
+  assets.forEach(a => { const pts = generateSpark(a.price, 14); const first = pts[0], last = pts[pts.length-1]; const chg = ((last-first)/first*100).toFixed(2); const sign = chg >= 0 ? '+' : ''; const cls = chg >= 0 ? 'pos' : 'neg'; const svgW = 200, svgH = 32; const min = Math.min(...pts), max = Math.max(...pts); const range = max - min || 1; const coords = pts.map((v,i) => `${(i/(pts.length-1))*svgW},${svgH-((v-min)/range)*(svgH-4)-2}`).join(' '); container.innerHTML += `<div class="sparkline-row"><span class="sp-name" style="color:${a.color}">${a.ticker}</span><svg class="sp-canvas" viewBox="0 0 ${svgW} ${svgH}" preserveAspectRatio="none"><defs><linearGradient id="sg${a.ticker}" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${a.color}" stop-opacity="0.4"/><stop offset="100%" stop-color="${a.color}" stop-opacity="1"/></linearGradient></defs><polyline points="${coords}" fill="none" stroke="url(#sg${a.ticker})" stroke-width="2" stroke-linejoin="round"/></svg><span class="sp-change ${cls}">${sign}${chg}%</span></div>`; });
+}
+buildSparklines();
+function buildBarChart() {
+  const container = document.getElementById('bar-chart'); container.innerHTML = ''; const vals = assets.map(a => ({ name: a.ticker, val: a.shares * a.price, color: a.color })); const max = Math.max(...vals.map(v => v.val));
+  vals.forEach(v => { const pct = (v.val/max)*100; container.innerHTML += `<div class="bar-group"><div class="bar-wrap"><span class="bar-val">$${v.val.toFixed(0)}</span><div class="bar-fill" style="height:${pct}%;background:${v.color};opacity:0.85"></div></div><span class="bar-label">${v.name}</span></div>`; });
+}
+buildBarChart();
+function buildDividends() {
+  const container = document.getElementById('div-months'); container.innerHTML = ''; const base = 15.5;
+  const divs = months.map(m => ({ m, val: base * (0.85 + Math.random() * 0.3) })); const maxDiv = Math.max(...divs.map(d => d.val));
+  divs.forEach((d, i) => { const pct = (d.val/maxDiv)*100; const hue = i < 5 ? '#0ea5e9' : i === 5 ? '#00e5a0' : '#f59e0b'; const isNow = i === new Date().getMonth(); container.innerHTML += `<div class="div-month"><div class="div-bar-track"><div class="div-bar" style="height:${pct}%;background:${hue};opacity:${isNow?1:0.6}"></div></div><span class="div-month-label" style="color:${isNow?'#fff':''}">${d.m}</span></div>`; });
+}
+buildDividends();
+function simulateRefresh() {
+  assets.forEach(a => { a.price = a.price * (1 + (Math.random() - 0.49) * 0.008); });
+  buildTable(); buildSparklines(); buildBarChart();
+  const total = assets.reduce((s, a) => s + a.shares * a.price, 0);
+  document.getElementById('kpi-usd').textContent = '$' + total.toFixed(2);
+  document.getElementById('kpi-try').textContent = '₺' + (total * USD_TRY).toLocaleString('tr-TR', {minimumFractionDigits:2});
+  document.getElementById('last-update').textContent = 'Son güncelleme: ' + new Date().toLocaleTimeString('tr-TR');
+}
+setInterval(simulateRefresh, 20000);
+document.getElementById('last-update').textContent = 'Son güncelleme: ' + new Date().toLocaleTimeString('tr-TR');
+</script>
+</body>
+</html>
