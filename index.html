@@ -2,8 +2,13 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>JERF Finansal OS</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JERF OS">
+<meta name="theme-color" content="#1a2744">
+<link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&family=Cormorant+Garamond:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0f1623;--bg2:#1a2744;--surface:#1e2d52;--surface2:#243360;--border:#2d3f6b;--accent:#c97a3a;--accent2:#e8e0d0;--gold:#d4a853;--text:#e8e8e8;--muted:#7a8db0;--white:#ffffff}
@@ -107,14 +112,31 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .si-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .si-val{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--white)}
 .si-val.g{color:var(--accent)}.si-val.b{color:var(--gold)}
-.rbtn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(201,122,58,.1);border:1px solid rgba(201,122,58,.3);color:var(--accent);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:10px;cursor:pointer;margin-top:12px;width:100%;transition:all .2s}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.rbtn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(201,122,58,.1);border:1px solid rgba(201,122,58,.3);color:var(--accent);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:10px;cursor:pointer;transition:all .2s}
 .rbtn:hover{background:rgba(201,122,58,.2)}
+.rbtn.pdf{background:rgba(212,168,83,.1);border-color:rgba(212,168,83,.3);color:var(--gold)}
+.rbtn.pdf:hover{background:rgba(212,168,83,.2)}
 .err{background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.3);color:#e05a5a;font-size:10px;padding:10px 16px;margin-bottom:12px;display:none}
+.report-modal{position:fixed;inset:0;background:rgba(10,14,25,.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.report-box{background:var(--surface);border:1px solid var(--border);max-width:600px;width:100%;padding:32px}
+.report-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--white);margin-bottom:4px}
+.report-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--accent);font-size:14px;margin-bottom:24px}
+.report-section{margin-bottom:20px}
+.report-section h3{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.report-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(45,63,107,.3)}
+.report-row:last-child{border-bottom:none}
+.report-row span:first-child{font-size:11px;color:var(--muted)}
+.report-row span:last-child{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--white)}
+.report-close{display:flex;gap:12px;margin-top:24px}
+.report-close button{flex:1;padding:12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:1px solid var(--border)}
+.report-close .dl-btn{background:rgba(201,122,58,.15);border-color:rgba(201,122,58,.4);color:var(--accent)}
+.report-close .cl-btn{background:transparent;color:var(--muted)}
 footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
 .f-logo{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--accent);font-size:12px}
 @media(max-width:1100px){.kpis{grid-template-columns:1fr 1fr}.kpi.big{grid-column:1/-1}.kpi.big .kpi-val{font-size:30px}.kpi-val{font-size:22px}.mgrid{grid-template-columns:1fr 260px}}
-@media(max-width:768px),(max-width:896px) and (orientation:landscape){.wrap{padding:10px}.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:10px 12px}.kpi.big{grid-column:1/-1}.kpi.big .kpi-val{font-size:22px}.kpi-val{font-size:17px}.mgrid{grid-template-columns:1fr}.donut-card{flex-direction:row;align-items:center;gap:12px}.donut-card .ch{display:none}.donut-wrap{margin:0;flex-shrink:0}#dsvg{width:100px;height:100px}.dcenter-val{font-size:13px}.legend{flex:1;margin-top:0}.bars{height:70px}.try-col{display:none}.shares-col{display:none}td,th{padding:7px 5px;font-size:10px}.tt{display:none}.bgrid{grid-template-columns:1fr}.mtrack{height:22px}.mlbl{font-size:6px}footer{flex-direction:column;gap:4px;text-align:center}}
+@media(max-width:768px),(max-width:896px) and (orientation:landscape){.wrap{padding:10px}.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:10px 12px}.kpi.big{grid-column:1/-1}.kpi.big .kpi-val{font-size:22px}.kpi-val{font-size:17px}.mgrid{grid-template-columns:1fr}.donut-card{flex-direction:row;align-items:center;gap:12px}.donut-card .ch{display:none}.donut-wrap{margin:0;flex-shrink:0}#dsvg{width:100px;height:100px}.dcenter-val{font-size:13px}.legend{flex:1;margin-top:0}.bars{height:70px}.try-col{display:none}.shares-col{display:none}td,th{padding:7px 5px;font-size:10px}.tt{display:none}.bgrid{grid-template-columns:1fr}.mtrack{height:22px}.mlbl{font-size:6px}footer{flex-direction:column;gap:4px;text-align:center}.btn-row{grid-template-columns:1fr}}
 @media(max-width:700px) and (orientation:landscape){.kpi.big .kpi-val{font-size:18px}.kpi-val{font-size:15px}#dsvg{width:85px;height:85px}}
 </style>
 </head>
@@ -125,6 +147,31 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
   <div class="loading-tag">Finansal OS — Veri Yükleniyor</div>
   <div class="load-bar"><div class="load-fill"></div></div>
 </div>
+
+<div class="report-modal" id="report-modal">
+  <div class="report-box">
+    <div class="report-title">JERF — Haftalık Rapor</div>
+    <div class="report-sub" id="r-date">—</div>
+    <div class="report-section">
+      <h3>Portföy Özeti</h3>
+      <div class="report-row"><span>Toplam Değer (USD)</span><span id="r-usd">—</span></div>
+      <div class="report-row"><span>Toplam Değer (TRY)</span><span id="r-try">—</span></div>
+      <div class="report-row"><span>USD/TRY Kuru</span><span id="r-rate">—</span></div>
+      <div class="report-row"><span>Aylık Temettü</span><span id="r-div">—</span></div>
+      <div class="report-row"><span>Yıllık Tahmini</span><span id="r-annual">—</span></div>
+      <div class="report-row"><span>Temettü Verimi</span><span id="r-yield">—</span></div>
+    </div>
+    <div class="report-section">
+      <h3>Varlık Dağılımı</h3>
+      <div id="r-assets"></div>
+    </div>
+    <div class="report-close">
+      <button class="dl-btn" onclick="downloadReport()">⬇ PDF İndir</button>
+      <button class="cl-btn" onclick="closeReport()">✕ Kapat</button>
+    </div>
+  </div>
+</div>
+
 <div class="wrap" id="wrap">
   <header>
     <div class="logo">
@@ -137,13 +184,15 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
       <div class="clock" id="clock">—</div>
     </div>
   </header>
+
   <div class="err" id="err">⚠ Sheets bağlantısı kurulamadı. Yedek veri gösteriliyor.</div>
   <div class="tape"><div class="tape-inner" id="tape"></div></div>
+
   <div class="kpis">
     <div class="kpi big g">
       <div class="kpi-label">Toplam Portföy Değeri</div>
       <div class="kpi-val" id="k-usd">—</div>
-      <div class="kpi-sub">≈ <span class="hi" id="k-try">—</span> <span style="font-size:9px;margin-left:6px">@ ₺<span id="k-rate">45.60</span> / $</span></div>
+      <div class="kpi-sub">≈ <span class="hi" id="k-try">—</span> <span style="font-size:9px;margin-left:6px">@ ₺<span id="k-rate">—</span> / $</span></div>
       <span class="pill pill-g">↑ Aktif</span>
     </div>
     <div class="kpi b">
@@ -165,6 +214,7 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
       <span class="pill pill-g">12 aylık</span>
     </div>
   </div>
+
   <div class="mgrid">
     <div class="card">
       <div class="ch"><span class="ct">Fiyat & Performans</span><span class="cb">Google Finance</span></div>
@@ -187,6 +237,7 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
       <div class="legend" id="legend"></div>
     </div>
   </div>
+
   <div class="tcard">
     <div class="ch"><span class="ct">Dinamik Varlık Takibi</span><span class="cb" id="s-status">Sheets ✓</span></div>
     <table>
@@ -201,6 +252,7 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
       <tbody id="tbody"></tbody>
     </table>
   </div>
+
   <div class="bgrid">
     <div class="dcard">
       <div class="ch"><span class="ct">Aylık Temettü Projeksiyonu</span><span class="cb">2025</span></div>
@@ -209,24 +261,29 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
     <div class="scard">
       <div class="ch"><span class="ct">Sistem Parametreleri</span><span class="cb">OS V2</span></div>
       <div class="sgrid">
-        <div class="si"><div class="si-lbl">USD/TRY Kuru</div><div class="si-val g" id="s-rate">45.60</div></div>
+        <div class="si"><div class="si-lbl">USD/TRY Kuru</div><div class="si-val g" id="s-rate">—</div></div>
         <div class="si"><div class="si-lbl">Veri Kaynağı</div><div class="si-val b">G.Finance</div></div>
         <div class="si"><div class="si-lbl">Temettü Verimi</div><div class="si-val g" id="s-yield">—</div></div>
         <div class="si"><div class="si-lbl">Toplam Lot</div><div class="si-val" id="s-lots">—</div></div>
         <div class="si" style="grid-column:1/-1"><div class="si-lbl">Felsefe</div><div class="si-val" style="font-size:10px;color:var(--accent)">SİSTEM › TAHMİN</div></div>
       </div>
-      <button class="rbtn" onclick="load()">⟳ &nbsp;YENİLE</button>
+      <div class="btn-row">
+        <button class="rbtn" onclick="load()">⟳ YENİLE</button>
+        <button class="rbtn pdf" onclick="showReport()">📋 HAFTALIK RAPOR</button>
+      </div>
     </div>
   </div>
+
   <footer>
     <p class="f-logo">JERF — Investor & Trader</p>
     <p id="last">Son güncelleme: —</p>
   </footer>
 </div>
+
 <script>
 const SID='10mScpuQoWyLK9LzOsQjcYxPxVCz6HpooRrH3WVR3TbM';
 const SN='Veri';
-const RATE=45.60;
+let RATE=45.60;
 const MN=['OCA','ŞUB','MAR','NİS','MAY','HAZ','TEM','AĞU','EYL','EKİ','KAS','ARA'];
 let A=[];
 
@@ -238,8 +295,15 @@ async function load(){
     const r=await fetch(`https://docs.google.com/spreadsheets/d/${SID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SN)}`);
     const t=await r.text();
     const j=JSON.parse(t.substring(47).slice(0,-2));
+    const rows=j.table.rows;
+
+    // Kuru F2'den oku (index 5)
+    if(rows[0]?.c[5]?.v){
+      RATE=parseFloat(rows[0].c[5].v)||45.60;
+    }
+
     A=[];
-    j.table.rows.forEach(row=>{
+    rows.forEach(row=>{
       if(!row.c[0]?.v)return;
       const tk=String(row.c[0].v).trim().toUpperCase();
       if(tk==='TICKER'||tk==='TİCKER')return;
@@ -253,6 +317,7 @@ async function load(){
         w:0
       });
     });
+
     const tot=A.reduce((s,a)=>s+a.s*a.p,0);
     A.forEach(a=>a.w=parseFloat(((a.s*a.p/tot)*100).toFixed(1)));
     document.getElementById('err').style.display='none';
@@ -274,6 +339,7 @@ function render(){
   kpi();tape();donut();table();sparks();barchart();divs();
   document.getElementById('loading').style.display='none';
   document.getElementById('wrap').style.display='block';
+  checkFriday();
 }
 
 function kpi(){
@@ -283,12 +349,14 @@ function kpi(){
   const y=tot>0?((ad/tot)*100).toFixed(2):0;
   document.getElementById('k-usd').textContent='$'+tot.toFixed(2);
   document.getElementById('k-try').textContent='₺'+(tot*RATE).toLocaleString('tr-TR',{minimumFractionDigits:2});
+  document.getElementById('k-rate').textContent=RATE.toFixed(4);
   document.getElementById('k-div').textContent='$'+md.toFixed(2);
   document.getElementById('k-div-try').textContent='≈ ₺'+(md*RATE).toFixed(2);
   document.getElementById('k-count').textContent=A.length;
   document.getElementById('k-tickers').textContent=A.map(a=>a.t).join(' · ');
   document.getElementById('k-annual').textContent='$'+ad.toFixed(2);
   document.getElementById('k-annual-try').textContent='≈ ₺'+(ad*RATE).toLocaleString('tr-TR',{minimumFractionDigits:0});
+  document.getElementById('s-rate').textContent=RATE.toFixed(4);
   document.getElementById('s-yield').textContent='%'+y;
   document.getElementById('s-lots').textContent=A.length+' ETF';
   document.getElementById('d-total').textContent='$'+Math.round(tot).toLocaleString();
@@ -296,8 +364,7 @@ function kpi(){
 
 function tape(){
   const x=A.map(a=>{
-    const prev=a.p*(1-(Math.random()*.01));
-    const ch=((a.p-prev)/prev*100).toFixed(2);
+    const ch=((Math.random()-.48)*.8).toFixed(2);
     const s=ch>=0?'+':'';const c=ch>=0?'pos':'neg';
     return`<span class="ti"><span class="tn">${a.t}</span><span class="tp">$${a.p.toFixed(2)}</span><span class="${c}">${s}${ch}%</span></span>`;
   }).join('');
@@ -324,42 +391,4 @@ function donut(){
 function table(){
   document.getElementById('tbody').innerHTML=A.map(a=>{
     const v=a.s*a.p;
-    return`<tr><td><div class="tc"><div class="pip" style="background:${a.c}"></div><div><span class="tn2">${a.t}</span><span class="tt">ETF</span></div></div></td><td class="shares-col">${a.s.toFixed(4)}</td><td class="pc" style="color:${a.c}">$${a.p.toFixed(2)}</td><td class="pc">$${v.toFixed(2)}</td><td class="pc try-col">₺${(v*RATE).toLocaleString('tr-TR',{minimumFractionDigits:2})}</td><td class="wc"><div class="wbw"><div class="wbb"><div class="wbf" style="width:${a.w}%;background:${a.c}"></div></div><span class="wp" style="color:${a.c}">%${a.w}</span></div></td></tr>`;
-  }).join('');
-}
-
-function sp(base,n){const p=[base];for(let i=1;i<n;i++)p.push(p[i-1]*(1+(Math.random()-.49)*.008));return p}
-
-function sparks(){
-  document.getElementById('sparklines').innerHTML=A.map(a=>{
-    const p=sp(a.p,14);const f=p[0],l=p[p.length-1];
-    const ch=((l-f)/f*100).toFixed(2);const s=ch>=0?'+':'';const c=ch>=0?'pos':'neg';
-    const W=200,H=28;const mn=Math.min(...p),mx=Math.max(...p),rn=mx-mn||1;
-    const pts=p.map((v,i)=>`${(i/(p.length-1))*W},${H-((v-mn)/rn)*(H-4)-2}`).join(' ');
-    return`<div class="sp-row"><span class="sp-name" style="color:${a.c}">${a.t}</span><svg class="sp-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="g${a.t}" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${a.c}" stop-opacity=".3"/><stop offset="100%" stop-color="${a.c}" stop-opacity="1"/></linearGradient></defs><polyline points="${pts}" fill="none" stroke="url(#g${a.t})" stroke-width="1.5" stroke-linejoin="round"/></svg><span class="sp-chg ${c}">${s}${ch}%</span></div>`;
-  }).join('');
-}
-
-function barchart(){
-  const vs=A.map(a=>({n:a.t,v:a.s*a.p,c:a.c}));
-  const mx=Math.max(...vs.map(v=>v.v));
-  document.getElementById('bars').innerHTML=vs.map(v=>`<div class="bg"><div class="bw"><span class="bv">$${v.v.toFixed(0)}</span><div class="bf" style="height:${(v.v/mx)*100}%;background:${v.c};opacity:.9"></div></div><span class="bl">${v.n}</span></div>`).join('');
-}
-
-function divs(){
-  const md=A.reduce((s,a)=>s+a.s*a.d,0)||15.5;
-  const ds=MN.map(m=>({m,v:md*(0.9+Math.random()*.2)}));
-  const mx=Math.max(...ds.map(d=>d.v));
-  const now=new Date().getMonth();
-  document.getElementById('months').innerHTML=ds.map((d,i)=>{
-    const h=i<4?'#7a8db0':i<8?'#c97a3a':'#d4a853';
-    const isNow=i===now;
-    return`<div class="month"><div class="mtrack"><div class="mbar" style="height:${(d.v/mx)*100}%;background:${h};opacity:${isNow?1:.55}"></div></div><span class="mlbl" style="color:${isNow?'var(--accent)':''};font-weight:${isNow?'700':'400'}">${d.m}</span></div>`;
-  }).join('');
-}
-
-load();
-setInterval(load,5*60*1000);
-</script>
-</body>
-</html>
+    return`<tr><td><div class="tc"><div class="pip" style="background:${a.c}"></div><div><span class="tn2">${a.t}</span><span class="tt">ETF</span></div></div></td><td class="shares-col">${a.s.toFixed(4)}</td><td class="pc"
