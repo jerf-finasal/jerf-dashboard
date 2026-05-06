@@ -125,7 +125,6 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .mev-title{font-family:'Syne',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2)}
 .mev-status{font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);color:var(--muted)}
 .mev-status.active{border-color:rgba(76,175,125,.4);color:#4caf7d;background:rgba(76,175,125,.08)}
-.mev-status.waiting{border-color:rgba(212,168,83,.4);color:var(--gold);background:rgba(212,168,83,.08)}
 .mev-rows{display:flex;flex-direction:column;gap:10px}
 .mev-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(45,63,107,.3)}
 .mev-row:last-child{border-bottom:none}
@@ -134,9 +133,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .mev-row-val.gold{color:var(--gold)}
 .mev-row-val.accent{color:var(--accent)}
 .mev-row-val.green{color:#4caf7d}
-.dagcard{background:var(--surface);border:1px solid var(--border);padding:20px}
-.dagcard::before{content:'';display:block;height:1px;background:var(--accent);margin:-20px -20px 16px -20px}
-.dagbar{margin-top:4px}
+.dagcard{background:var(--surface);border:1px solid var(--border);padding:20px;border-top:1px solid var(--accent)}
 .dagbar-label{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase}
 .dagbar-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden;display:flex}
 .dagbar-ana{height:100%;background:var(--gold);transition:width .8s ease}
@@ -258,8 +255,9 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
       <div class="mev-card" id="mev-card">
         <div class="mev-header">
           <span class="mev-title">Vadeli Mevduat</span>
-          <span class="mev-status waiting" id="mev-status">Beklemede</span>
+          <span class="mev-status" id="mev-status">Beklemede</span>
         </div>
         <div class="mev-rows">
           <div class="mev-row"><span class="mev-row-label">Anapara</span><span class="mev-row-val gold" id="mev-ana">—</span></div>
-          <div class="mev-row"><span
+          <div class="mev-row"><span class="mev-row-label">Faiz Oranı (Yıllık)</span><span class="mev-row-val accent" id="mev-faiz-oran">—</span></div>
+          <div class="mev-row"><span class="mev-row-label">Vade</span><span class="mev-row-val
