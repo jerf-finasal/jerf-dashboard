@@ -33,31 +33,29 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 .dot.green{background:var(--green)}.dot.yellow{background:var(--gold)}.dot.red{background:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .clock{font-size:10px;color:var(--muted)}
-
-/* RİSK BANNER */
-.risk-banner{padding:12px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border)}
+.risk-banner{padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);position:relative;overflow:hidden}
+.risk-banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
 .risk-banner.guvenli{background:rgba(76,175,125,.08);border-color:rgba(76,175,125,.3)}
+.risk-banner.guvenli::before{background:var(--green)}
 .risk-banner.dikkatli{background:rgba(212,168,83,.08);border-color:rgba(212,168,83,.3)}
+.risk-banner.dikkatli::before{background:var(--gold)}
 .risk-banner.tehlike{background:rgba(224,90,90,.08);border-color:rgba(224,90,90,.3)}
-.risk-left{display:flex;align-items:center;gap:12px}
-.risk-icon{font-size:20px}
-.risk-durum{font-family:'Syne',sans-serif;font-weight:800;font-size:16px}
+.risk-banner.tehlike::before{background:var(--red)}
+.risk-left{display:flex;align-items:center;gap:16px}
+.risk-emoji{font-size:32px;line-height:1}
+.risk-durum{font-family:'Syne',sans-serif;font-weight:800;font-size:18px}
 .risk-durum.guvenli{color:var(--green)}.risk-durum.dikkatli{color:var(--gold)}.risk-durum.tehlike{color:var(--red)}
-.risk-aksiyon{font-size:11px;color:var(--muted);margin-top:2px}
-.risk-right{display:flex;gap:20px;text-align:right}
-.risk-metric{display:flex;flex-direction:column;align-items:flex-end}
-.risk-metric-val{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--white)}
-.risk-metric-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px}
-
-/* TAPE */
+.risk-aksiyon{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:1px}
+.risk-right{display:flex;gap:24px}
+.risk-metric{text-align:center}
+.risk-metric-val{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--white)}
+.risk-metric-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px}
 .tape{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;height:28px;display:flex;align-items:center;margin-bottom:16px}
 .tape-inner{display:flex;gap:40px;animation:scroll 25s linear infinite;white-space:nowrap}
 @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .ti{font-size:10px;display:flex;align-items:center;gap:8px}
 .tn{color:var(--muted)}.tp{color:var(--text)}
 .pos{color:var(--green)}.neg{color:var(--red)}
-
-/* KPI */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
 .kpi{background:var(--surface);border:1px solid var(--border);padding:14px 16px;position:relative;overflow:hidden}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:1px}
@@ -65,9 +63,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 .kpi-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .kpi-val{font-family:'Syne',sans-serif;font-weight:800;font-size:22px;color:var(--white);line-height:1;margin-bottom:3px}
 .kpi-sub{font-size:9px;color:var(--muted)}
-.kpi-sub .hi{color:var(--accent)}
-
-/* GRID */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
 .card{background:var(--surface);border:1px solid var(--border);padding:18px}
@@ -78,8 +73,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .ct{font-family:'Syne',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2)}
 .cb{font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:2px 6px;border:1px solid var(--border)}
-
-/* TABLE */
 .jtable{width:100%;border-collapse:collapse}
 .jtable th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 8px 8px;border-bottom:1px solid var(--border)}
 .jtable th:last-child{text-align:right}
@@ -89,21 +82,15 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 .tc{display:flex;align-items:center;gap:6px}
 .pip{width:3px;height:24px;border-radius:1px;flex-shrink:0}
 .tn2{font-family:'Syne',sans-serif;font-weight:700;font-size:12px;color:var(--white)}
-.tt{font-size:8px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:block}
 .pc{font-family:'Space Mono',monospace;font-size:11px}
 .tr{text-align:right}
 .pos-cell{color:var(--green);font-family:'Syne',sans-serif;font-weight:700}
 .neg-cell{color:var(--red);font-family:'Syne',sans-serif;font-weight:700}
-
-/* KASA */
-.kasa-rows{display:flex;flex-direction:column;gap:8px}
 .kasa-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(45,63,107,.3)}
 .kasa-row:last-child{border-bottom:none}
 .kasa-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 .kasa-val{font-family:'Syne',sans-serif;font-weight:700;font-size:14px;color:var(--white)}
 .kasa-val.gold{color:var(--gold)}.kasa-val.green{color:var(--green)}.kasa-val.blue{color:var(--blue)}
-
-/* DONUT */
 .donut-wrap{position:relative;display:flex;justify-content:center;align-items:center;margin:10px 0}
 .dcenter{position:absolute;text-align:center}
 .dcenter-val{font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--white)}
@@ -114,8 +101,6 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 .ld{width:8px;height:8px;border-radius:1px;flex-shrink:0}
 .ln{font-size:10px;color:var(--text)}
 .lp{font-family:'Syne',sans-serif;font-weight:700;font-size:11px}
-
-/* VADELİ */
 .vade-item{background:rgba(26,39,68,.5);border:1px solid var(--border);padding:12px;margin-bottom:8px}
 .vade-item:last-child{margin-bottom:0}
 .vade-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -123,33 +108,31 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 .vade-durum{font-size:8px;letter-spacing:2px;text-transform:uppercase;padding:2px 6px;border:1px solid}
 .vade-durum.aktif{border-color:rgba(76,175,125,.4);color:var(--green);background:rgba(76,175,125,.08)}
 .vade-durum.doldu{border-color:rgba(224,90,90,.4);color:var(--red);background:rgba(224,90,90,.08)}
-.vade-rows{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.vade-rows{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
 .vade-cell{display:flex;flex-direction:column;gap:2px}
 .vade-cell-lbl{font-size:7px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 .vade-cell-val{font-size:11px;color:var(--white);font-family:'Space Mono',monospace}
 .vade-gun-big{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--gold);text-align:center;padding:8px 0}
 .vade-gun-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center}
-
-/* TEMETTÜ */
 .months{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-top:12px}
 .month{display:flex;flex-direction:column;align-items:center;gap:2px}
 .mtrack{width:100%;height:32px;background:var(--bg2);border-radius:1px;display:flex;align-items:flex-end;overflow:hidden}
 .mbar{width:100%;border-radius:1px 1px 0 0}
 .mlbl{font-size:6px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-
-/* BUTONLAR */
+.sys-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.sys-item{background:var(--bg2);border:1px solid var(--border);padding:10px 12px}
+.sys-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.sys-val{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--white)}
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .rbtn{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(201,122,58,.1);border:1px solid rgba(201,122,58,.3);color:var(--accent);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:10px;cursor:pointer;transition:all .2s;width:100%}
 .rbtn:hover{background:rgba(201,122,58,.2)}
 .rbtn.pdf{background:rgba(212,168,83,.1);border-color:rgba(212,168,83,.3);color:var(--gold)}
-
-/* RAPOR MODAL */
 .report-modal{position:fixed;inset:0;background:rgba(10,14,25,.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
 .report-box{background:var(--surface);border:1px solid var(--border);max-width:640px;width:100%;padding:28px}
 .report-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--white);margin-bottom:4px}
 .report-sub{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--accent);font-size:13px;margin-bottom:20px}
-.report-section{margin-bottom:16px}
-.report-section h3{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.rsec{margin-bottom:16px}
+.rsec h3{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 .rrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(45,63,107,.3)}
 .rrow:last-child{border-bottom:none}
 .rrow span:first-child{font-size:10px;color:var(--muted)}
@@ -158,20 +141,12 @@ header{display:flex;justify-content:space-between;align-items:flex-start;margin-
 .report-close button{flex:1;padding:10px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:1px solid var(--border)}
 .report-close .dl-btn{background:rgba(201,122,58,.15);border-color:rgba(201,122,58,.4);color:var(--accent)}
 .report-close .cl-btn{background:transparent;color:var(--muted)}
-
 .err{background:rgba(224,90,90,.08);border:1px solid rgba(224,90,90,.3);color:var(--red);font-size:10px;padding:8px 14px;margin-bottom:12px;display:none}
 footer{margin-top:16px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
 .f-logo{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--accent);font-size:11px}
-
-@media(max-width:1100px){.kpis{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr 1fr}}
-@media(max-width:768px),(max-width:896px) and (orientation:landscape){
-  .wrap{padding:10px}.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:10px 12px}.kpi-val{font-size:18px}
-  .grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}
-  .risk-right{gap:12px}.risk-metric-val{font-size:13px}
-  .jtable th,.jtable td{padding:6px 5px;font-size:10px}
-  footer{flex-direction:column;gap:4px;text-align:center}.btn-row{grid-template-columns:1fr}
-}
+@media(max-width:1100px){.kpis{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:1fr 1fr}.sys-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px),(max-width:896px) and (orientation:landscape){.wrap{padding:10px}.kpis{grid-template-columns:1fr 1fr;gap:8px}.kpi{padding:10px 12px}.kpi-val{font-size:18px}.grid2{grid-template-columns:1fr}.grid3{grid-template-columns:1fr}.risk-right{gap:12px}.risk-metric-val{font-size:16px}.risk-emoji{font-size:24px}.jtable th,.jtable td{padding:6px 5px;font-size:10px}footer{flex-direction:column;gap:4px;text-align:center}.btn-row{grid-template-columns:1fr}.sys-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:700px) and (orientation:landscape){.kpi-val{font-size:15px}}
 </style>
 </head>
@@ -187,27 +162,27 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
   <div class="report-box">
     <div class="report-title">JERF — Haftalık Rapor</div>
     <div class="report-sub" id="r-date">—</div>
-    <div class="report-section">
+    <div class="rsec">
       <h3>Risk Durumu</h3>
       <div class="rrow"><span>Durum</span><span id="r-risk">—</span></div>
       <div class="rrow"><span>10Y Faiz</span><span id="r-10y">—</span></div>
       <div class="rrow"><span>VIX</span><span id="r-vix">—</span></div>
+      <div class="rrow"><span>Aksiyon</span><span id="r-aksiyon">—</span></div>
     </div>
-    <div class="report-section">
+    <div class="rsec">
       <h3>Portföy Özeti</h3>
       <div class="rrow"><span>Toplam TL</span><span id="r-total-tl">—</span></div>
-      <div class="rrow"><span>Toplam USD</span><span id="r-total-usd">—</span></div>
-      <div class="rrow"><span>USD/TRY Kuru</span><span id="r-rate">—</span></div>
-      <div class="rrow"><span>MİDAS (ETF)</span><span id="r-midas">—</span></div>
+      <div class="rrow"><span>MİDAS ETF</span><span id="r-midas">—</span></div>
       <div class="rrow"><span>BİST</span><span id="r-bist">—</span></div>
       <div class="rrow"><span>Nakit TL</span><span id="r-nakit-tl">—</span></div>
       <div class="rrow"><span>Nakit USD</span><span id="r-nakit-usd">—</span></div>
+      <div class="rrow"><span>USD/TRY</span><span id="r-rate">—</span></div>
     </div>
-    <div class="report-section">
-      <h3>MİDAS ETF Detay</h3>
+    <div class="rsec">
+      <h3>MİDAS Detay</h3>
       <div id="r-midas-detail"></div>
     </div>
-    <div class="report-section">
+    <div class="rsec">
       <h3>BİST Detay</h3>
       <div id="r-bist-detail"></div>
     </div>
@@ -226,20 +201,19 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
       <div class="logo-tag">CRYPTO · BİST · ETF · VADELİ</div>
     </div>
     <div class="hright">
-      <div class="badge"><span class="dot green" id="risk-dot"></span> <span id="risk-badge-text">Canlı Takip</span></div>
+      <div class="badge"><span class="dot green" id="risk-dot"></span><span id="risk-badge-text">Canlı Takip</span></div>
       <div class="clock" id="clock">—</div>
     </div>
   </header>
 
   <div class="err" id="err">⚠ Sheets bağlantısı kurulamadı.</div>
 
-  <!-- RİSK BANNER -->
   <div class="risk-banner guvenli" id="risk-banner">
     <div class="risk-left">
-      <div class="risk-icon" id="risk-icon">🟢</div>
+      <div class="risk-emoji" id="risk-emoji">🟢</div>
       <div>
         <div class="risk-durum guvenli" id="risk-durum">GÜVENLİ</div>
-        <div class="risk-aksiyon" id="risk-aksiyon">Rahat yatırım yap</div>
+        <div class="risk-aksiyon" id="risk-aksiyon-text">Rahat yatırım yap</div>
       </div>
     </div>
     <div class="risk-right">
@@ -256,7 +230,6 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
 
   <div class="tape"><div class="tape-inner" id="tape"></div></div>
 
-  <!-- KPI -->
   <div class="kpis">
     <div class="kpi g">
       <div class="kpi-label">Toplam Portföy (TL)</div>
@@ -280,45 +253,35 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
     </div>
   </div>
 
-  <!-- MİDAS + BİST -->
   <div class="grid2">
     <div class="card blue-top">
-      <div class="ch"><span class="ct">MİDAS — ETF Portföyü</span><span class="cb" id="midas-status">—</span></div>
+      <div class="ch"><span class="ct">MİDAS — ETF Portföyü</span><span class="cb" id="midas-cb">—</span></div>
       <table class="jtable">
-        <thead><tr>
-          <th>Hisse</th><th>Adet</th><th>Maliyet</th><th>Güncel</th><th style="text-align:right">K/Z %</th>
-        </tr></thead>
+        <thead><tr><th>Hisse</th><th>Adet</th><th>Maliyet</th><th>Güncel</th><th style="text-align:right">K/Z %</th></tr></thead>
         <tbody id="midas-tbody"></tbody>
       </table>
     </div>
     <div class="card gold-top">
-      <div class="ch"><span class="ct">BİST — Türk Hisseleri</span><span class="cb" id="bist-status">—</span></div>
+      <div class="ch"><span class="ct">BİST — Türk Hisseleri</span><span class="cb" id="bist-cb">—</span></div>
       <table class="jtable">
-        <thead><tr>
-          <th>Hisse</th><th>Adet</th><th>Maliyet</th><th>Güncel</th><th style="text-align:right">K/Z %</th>
-        </tr></thead>
+        <thead><tr><th>Hisse</th><th>Adet</th><th>Maliyet</th><th>Güncel</th><th style="text-align:right">K/Z %</th></tr></thead>
         <tbody id="bist-tbody"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- KASA + VADELİ + DAĞILIM -->
   <div class="grid3">
     <div class="card green-top">
       <div class="ch"><span class="ct">Kasa</span><span class="cb">Nakit</span></div>
-      <div class="kasa-rows">
-        <div class="kasa-row"><span class="kasa-label">Nakit TL</span><span class="kasa-val gold" id="kasa-tl">—</span></div>
-        <div class="kasa-row"><span class="kasa-label">Nakit USD</span><span class="kasa-val blue" id="kasa-usd">—</span></div>
-        <div class="kasa-row"><span class="kasa-label">USD/TRY Kuru</span><span class="kasa-val" id="kasa-kur">—</span></div>
-        <div class="kasa-row"><span class="kasa-label">USD → TRY</span><span class="kasa-val green" id="kasa-usd-tl">—</span></div>
-      </div>
+      <div class="kasa-row"><span class="kasa-label">Nakit TL</span><span class="kasa-val gold" id="kasa-tl">—</span></div>
+      <div class="kasa-row"><span class="kasa-label">Nakit USD</span><span class="kasa-val blue" id="kasa-usd">—</span></div>
+      <div class="kasa-row"><span class="kasa-label">USD/TRY Kuru</span><span class="kasa-val" id="kasa-kur">—</span></div>
+      <div class="kasa-row"><span class="kasa-label">USD → TRY</span><span class="kasa-val green" id="kasa-usd-tl">—</span></div>
     </div>
-
     <div class="card accent-top">
-      <div class="ch"><span class="ct">Vadeli Mevduat</span><span class="cb" id="vadeli-count">—</span></div>
+      <div class="ch"><span class="ct">Vadeli Mevduat</span><span class="cb" id="vadeli-cb">—</span></div>
       <div id="vadeli-list"></div>
     </div>
-
     <div class="card">
       <div class="ch"><span class="ct">Varlık Dağılımı</span><span class="cb">%</span></div>
       <div class="donut-wrap">
@@ -334,15 +297,13 @@ footer p{font-size:9px;color:var(--muted);letter-spacing:1px}
     </div>
   </div>
 
-  <!-- TEMETTÜ TAKVİMİ -->
   <div class="card" style="margin-bottom:12px">
     <div class="ch"><span class="ct">ETF Temettü Takvimi</span><span class="cb">2026</span></div>
     <div class="months" id="months"></div>
   </div>
 
-  <!-- SİSTEM -->
   <div class="card" style="margin-bottom:12px">
     <div class="ch"><span class="ct">Sistem Parametreleri</span><span class="cb">V3</span></div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-      <div style="background:var(--bg2);border:1px solid var(--border);padding:10px 12px">
-        <div style="font-size:8px;letter-spacing:2px;text-transf
+    <div class="sys-grid">
+      <div class="sys-item"><div class="sys-lbl">USD/TRY</div><div class="sys-val" style="color:var(--accent)" id="sys-kur">—</div></div>
+ 
