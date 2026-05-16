@@ -1,1 +1,130 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JERF V3 - Canlı Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
 
+    <div class="max-w-4xl mx-auto mb-6 flex justify-between items-center border-b border-slate-700 pb-4">
+        <div>
+            <h1 class="text-2xl font-bold text-emerald-400 tracking-wide">JERF V3</h1>
+            <p class="text-xs text-slate-400">Sistem > Tahmin</p>
+        </div>
+        <div class="text-right">
+            <span id="loading-status" class="text-xs bg-amber-500/20 text-amber-400 px-2 py-1 rounded animate-pulse">Veriler Yükleniyor...</span>
+            <p id="last-update" class="text-[10px] text-slate-500 mt-1"></p>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
+        
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl">
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Piyasa Risk Algısı (VIX)</h3>
+            <p id="vix-value" class="text-3xl font-bold mt-2 text-slate-300">--</p>
+            <span id="vix-status" class="text-xs block mt-2 text-slate-500">Yükleniyor...</span>
+        </div>
+
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl">
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">ABD 10 Yıllık Tahvil</h3>
+            <p id="us10y-value" class="text-3xl font-bold mt-2 text-slate-300">--</p>
+            <span class="text-xs block mt-2 text-slate-400">Makro Hizalanma Göstergesi</span>
+        </div>
+
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-xl md:col-span-1">
+            <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Mevcut Durum</h3>
+            <div class="mt-2">
+                <p class="text-xs text-slate-400">Portföy Büyüklüğü:</p>
+                <p id="portfolio-value" class="text-2xl font-bold text-emerald-400">$3,000</p>
+            </div>
+            <div class="mt-2 border-t border-slate-700 pt-2">
+                <p class="text-xs text-slate-400">Bu Ayki Nakit Akışı:</p>
+                <p id="dividend-value" class="text-xl font-bold text-cyan-400">~ $17</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="max-w-4xl mx-auto mt-6 bg-slate-800 rounded-xl border border-slate-700 shadow-xl overflow-hidden">
+        <div class="p-4 bg-slate-750 border-b border-slate-700">
+            <h3 class="text-sm font-semibold text-slate-300">DASHBOARD İzleme Tablosu</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <tbody id="sheet-table-body" class="text-sm text-slate-300 divide-y divide-slate-700">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Sayfa yüklendiğinde Google Apps Script backend motorunu tetikle
+        window.onload = function() {
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function(response) {
+                        if(response.status === "success") {
+                            verileriEkranaBas(response.rawData, response.lastUpdate);
+                        } else {
+                            hataGoster("Veri hatası: " + response.message);
+                        }
+                    })
+                    .withFailureHandler(function(error) {
+                        hataGoster("Bağlantı hatası: " + error.toString());
+                    })
+                    .getDashboardData();
+            } else {
+                // Eğer yerel olarak veya doğrudan tarayıcıdan açılırsa test verisi göster
+                document.getElementById("loading-status").innerText = "Test Modu (Canlı Değil)";
+                document.getElementById("loading-status").className = "text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded";
+            }
+        };
+
+        function verileriEkranaBas(data, lastUpdate) {
+            // Durum güncellemeleri
+            document.getElementById("loading-status").innerText = "Canlı";
+            document.getElementById("loading-status").className = "text-xs bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded";
+            document.getElementById("last-update").innerText = "Son Güncelleme: " + lastUpdate;
+
+            // E-tablodaki verileri hücre koordinatlarına göre kartlara dağıtıyoruz
+            // NOT: Verilerinizin e-tablodaki yerlerine göre bu indeksleri (örn: data[1][1]) güncelleyebilirsiniz.
+            try {
+                if(data && data.length > 0) {
+                    // Örnek olarak VIX değerini tablonun ilk satırlarından tahmini okuyoruz:
+                    document.getElementById("vix-value").innerText = data[1] ? data[1][1] : "--";
+                    document.getElementById("us10y-value").innerText = data[2] ? data[2][1] : "--";
+                    
+                    // Alt kısımdaki tüm DASHBOARD sayfasını dinamik tablo olarak basma:
+                    var tbody = document.getElementById("sheet-table-body");
+                    tbody.innerHTML = ""; // Temizle
+                    
+                    data.forEach(function(row) {
+                        var tr = document.createElement("tr");
+                        row.forEach(function(cell) {
+                            var td = document.createElement("td");
+                            td.className = "p-3 border-r border-slate-700/50 last:border-0";
+                            td.innerText = cell;
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    });
+                }
+            } catch(e) {
+                console.error("Arayüz dağıtım hatası:", e);
+            }
+        }
+
+        function hataGoster(msg) {
+            var status = document.getElementById("loading-status");
+            status.innerText = "Hata Oluştu";
+            status.className = "text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded";
+            console.error(msg);
+        }
+    </script>
+</body>
+</html>
